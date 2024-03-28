@@ -17,18 +17,28 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    setFormData({
-      name: "",
-      email: "",
-      message: ""
-    });
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString(),
+    })
+      .then(() => {
+        console.log("Form successfully submitted to Netlify");
+        // Reset form data after successful submission
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+        });
+      })
+      .catch((error) => console.error("Form submission error:", error));
   };
 
   return (
     <div>
       <h1>Contact Form</h1>
-      <form onSubmit={handleSubmit} >
+      <form onSubmit={handleSubmit} netlify>
+        <input type="hidden" name="form-name" value="contact" />
         <div>
           <label>Name:</label>
           <input
@@ -40,12 +50,12 @@ function App() {
         </div>
         <div>
           <label>Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={FormDataEvent.email}
-              onChange={handleChange}
-            />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
         </div>
         <div>
           <label>Message:</label>
